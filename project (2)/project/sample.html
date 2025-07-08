@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Map Plotter with Safe Camps</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css"
+    />
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body,
+      html {
+        height: 100%;
+        margin: 0;
+      }
+
+      #sidebar {
+        height: 100%;
+        width: 25%;
+        float: left;
+        background-color: #f8f9fa;
+        padding: 20px;
+        overflow-y: auto;
+      }
+
+      #mapContainer {
+        height: 100%;
+        width: 75%;
+        float: left;
+      }
+
+      #map {
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1 class="text-center">Plot Safe Camps on Map</h1>
+    <div id="sidebar">
+      <form id="predictionForm">
+        <div class="form-group">
+          <label for="prediction_type">Select Prediction Type:</label>
+          <select
+            class="form-control"
+            id="prediction_type"
+            name="prediction_type"
+            required
+          >
+            <option value="" disabled selected>Select</option>
+            <option value="earthquake">Earthquake</option>
+            <option value="flood">Flood</option>
+          </select>
+        </div>
+
+        <div id="earthquakeInputs" style="display: none">
+          <h3>Earthquake Input</h3>
+          <div class="form-group">
+            <label for="depth">Depth (in km):</label>
+            <input type="number" class="form-control" name="depth" required />
+          </div>
+          <div class="form-group">
+            <label for="magType">Magnitude Type:</label>
+            <input type="text" class="form-control" name="magType" required />
+          </div>
+          <div class="form-group">
+            <label for="nst">NST:</label>
+            <input type="number" class="form-control" name="nst" required />
+          </div>
+          <div class="form-group">
+            <label for="gap">Gap:</label>
+            <input type="number" class="form-control" name="gap" required />
+          </div>
+          <div class="form-group">
+            <label for="dmin">Dmin:</label>
+            <input type="number" class="form-control" name="dmin" required />
+          </div>
+          <div class="form-group">
+            <label for="rms">RMS:</label>
+            <input type="number" class="form-control" name="rms" required />
+          </div>
+          <div class="form-group">
+            <label for="horizontalError">Horizontal Error:</label>
+            <input
+              type="number"
+              class="form-control"
+              name="horizontalError"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="depthError">Depth Error:</label>
+            <input
+              type="number"
+              class="form-control"
+              name="depthError"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="magError">Magnitude Error:</label>
+            <input
+              type="number"
+              class="form-control"
+              name="magError"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="magNst">Magnitude NST:</label>
+            <input type="number" class="form-control" name="magNst" required />
+          </div>
+          <div class="form-group">
+            <label for="type">Type:</label>
+            <input type="text" class="form-control" name="type" required />
+          </div>
+          <!-- Additional earthquake fields -->
+        </div>
+
+        <div id="floodInputs" style="display: none">
+          <h3>Flood Input</h3>
+          <div class="form-group">
+            <label for="daily_rainfall">Daily Rainfall:</label>
+            <input
+              type="number"
+              class="form-control"
+              name="daily_rainfall"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="river_water_level">River Water Level:</label>
+            <input
+              type="number"
+              class="form-control"
+              name="river_water_level"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="soil_moisture_content">Soil Moisture Content:</label>
+            <input
+              type="number"
+              class="form-control"
+              name="soil_moisture_content"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="elevation">Elevation:</label>
+            <input
+              type="number"
+              class="form-control"
+              name="elevation"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="slope">Slope:</label>
+            <input type="number" class="form-control" name="slope" required />
+          </div>
+          <div class="form-group">
+            <label for="wind_speed">Wind Speed:</label>
+            <input
+              type="number"
+              class="form-control"
+              name="wind_speed"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="construction_activity_encoded"
+              >Construction Activity Encoded:</label
+            >
+            <input
+              type="number"
+              class="form-control"
+              name="construction_activity_encoded"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="population_density_x_encoded"
+              >Population Density X Encoded:</label
+            >
+            <input
+              type="number"
+              class="form-control"
+              name="population_density_x_encoded"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="dams_reservoirs_encoded"
+              >Dams/Reservoirs Encoded:</label
+            >
+            <input
+              type="number"
+              class="form-control"
+              name="dams_reservoirs_encoded"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="drainage_system_encoded"
+              >Drainage System Encoded:</label
+            >
+            <input
+              type="number"
+              class="form-control"
+              name="drainage_system_encoded"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="population_density_y_encoded"
+              >Population Density Y Encoded:</label
+            >
+            <input
+              type="number"
+              class="form-control"
+              name="population_density_y_encoded"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="agricultural_activity_encoded"
+              >Agricultural Activity Encoded:</label
+            >
+            <input
+              type="number"
+              class="form-control"
+              name="agricultural_activity_encoded"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="latitude">Latitude:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="latitude"
+            name="latitude"
+          />
+        </div>
+        <div class="form-group">
+          <label for="longitude">Longitude:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="longitude"
+            name="longitude"
+          />
+        </div>
+        <div class="form-group">
+          <label for="routeType">Select Route Type:</label>
+          <select class="form-control" id="routeType">
+            <option value="road">Road Route</option>
+            <option value="air">Air Route (Helicopter)</option>
+          </select>
+        </div>
+
+        <button type="button" id="predictButton" class="btn btn-primary">
+          Predict
+        </button>
+        <button type="button" id="routeButton" class="btn btn-success mt-3">
+          Plot Nearest Safe Camp
+        </button>
+      </form>
+    </div>
+
+    <div id="mapContainer">
+      <div id="map"></div>
+    </div>
+
+    <script>
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+
+      document.addEventListener("DOMContentLoaded", () => {
+        var map = L.map("map").setView([20, 77], 5); // Default view set to India
+
+        // Add a tile layer to the map
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 19,
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }).addTo(map);
+
+        var routingControl;
+
+        async function plotNearestSafeCamp(
+          latitude,
+          longitude,
+          type,
+          routeType
+        ) {
+          map.eachLayer(function (layer) {
+            if (layer instanceof L.Marker || layer instanceof L.Polyline) {
+              map.removeLayer(layer);
+            }
+          });
+
+          const fileName =
+            type === "earthquake"
+              ? "project (2)\project\earthquake_safe_camps.csv"
+              : "project (2)\project\flood_safe_camps.csv"
+          const response = await fetch(fileName);
+          const text = await response.text();
+          const data = parseCSV(text);
+
+          let nearestCamp = null;
+          let minDistance = Infinity;
+
+          data.forEach((camp) => {
+            const distance = calculateDistance(
+              latitude,
+              longitude,
+              camp.latitude,
+              camp.longitude
+            );
+            if (
+              (type === "earthquake" && camp.safe_camp_earthquake === 1) ||
+              (type === "flood" && camp.safe_camp_flood === 1)
+            ) {
+              if (distance < minDistance) {
+                minDistance = distance;
+                nearestCamp = camp;
+              }
+            }
+          });
+          if (nearestCamp) {
+            const marker = L.marker([
+              nearestCamp.latitude,
+              nearestCamp.longitude,
+            ])
+              .addTo(map)
+              .bindPopup(
+                `Nearest Safe Camp: ${nearestCamp.latitude}, ${nearestCamp.longitude}`
+              )
+              .openPopup();
+
+            if (routeType === "road") {
+              routingControl = L.Routing.control({
+                waypoints: [
+                  L.latLng(latitude, longitude),
+                  L.latLng(nearestCamp.latitude, nearestCamp.longitude),
+                ],
+                routeWhileDragging: true,
+              }).addTo(map);
+            } else if (routeType === "air") {
+              L.polyline(
+                [
+                  [latitude, longitude],
+                  [nearestCamp.latitude, nearestCamp.longitude],
+                ],
+                { color: "blue" }
+              ).addTo(map);
+            }
+
+            map.setView([nearestCamp.latitude, nearestCamp.longitude], 12);
+          } else {
+            alert("No safe camps available for the selected type.");
+          }
+        }
+
+        function parseCSV(text) {
+          const rows = text.split("\n").slice(1);
+          return rows.map((row) => {
+            const cols = row.split(",");
+            return {
+              latitude: +cols[0],
+              longitude: +cols[1],
+              safe_camp_earthquake: +cols[13],
+              safe_camp_flood: +cols[14],
+            };
+          });
+        }
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+          const R = 6371;
+          const dLat = ((lat2 - lat1) * Math.PI) / 180;
+          const dLon = ((lon2 - lon1) * Math.PI) / 180;
+          const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos((lat1 * Math.PI) / 180) *
+              Math.cos((lat2 * Math.PI) / 180) *
+              Math.sin(dLon / 2) *
+              Math.sin(dLon / 2);
+          const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+          return R * c;
+        }
+
+        const predictionTypeDropdown =
+          document.getElementById("prediction_type");
+        const earthquakeInputs = document.getElementById("earthquakeInputs");
+        const floodInputs = document.getElementById("floodInputs");
+        const predictButton = document.getElementById("predictButton");
+        const routeButton = document.getElementById("routeButton");
+
+        predictionTypeDropdown.addEventListener("change", () => {
+          earthquakeInputs.style.display =
+            predictionTypeDropdown.value === "earthquake" ? "block" : "none";
+          floodInputs.style.display =
+            predictionTypeDropdown.value === "flood" ? "block" : "none";
+        });
+
+        predictButton.addEventListener("click", () => {
+          const formData = new FormData(
+            document.getElementById("predictionForm")
+          );
+          const data = {};
+          formData.forEach((value, key) => {
+            data[key] = value;
+          });
+
+          const raw = JSON.stringify({ data: data });
+          const requestOptions = {
+            method: "POST",
+            headers: myHeaders,
+            body: raw,
+            redirect: "follow",
+          };
+
+          fetch("http://localhost:8000/prediction", requestOptions)
+            .then((res) => res.json())
+            .then((data) => console.log(data))
+            .catch((error) => console.error(error));
+        });
+
+        routeButton.addEventListener("click", () => {
+          const latitude = parseFloat(
+            document.getElementById("latitude").value
+          );
+          const longitude = parseFloat(
+            document.getElementById("longitude").value
+          );
+          const routeType = document.getElementById("routeType").value;
+          const predictionType =
+            document.getElementById("prediction_type").value;
+
+          if (isNaN(latitude) || isNaN(longitude)) {
+            alert("Please enter valid latitude and longitude values!");
+            return;
+          }
+
+          plotNearestSafeCamp(latitude, longitude, predictionType, routeType);
+        });
+      });
+      
+    </script>
+  </body>
+</html>
