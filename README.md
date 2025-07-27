@@ -75,7 +75,6 @@ To get the project running locally, follow these steps:
 This project was developed by:
 -   Sumanth Ponugupati
 -   Teja Sai Yallamelli
--   Phanidhar Chilukuri
 
 ## 📞 Contact
 
