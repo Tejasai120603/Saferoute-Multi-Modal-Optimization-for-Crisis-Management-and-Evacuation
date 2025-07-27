@@ -18,6 +18,13 @@ The primary goal of this project is to create a unified solution for disaster ma
 -   **Interactive User Interface**: A simple GUI allows users to input their location, get predictions, and view optimized routes on a map.
 -   **Resource Allocation**: A system to manage and transfer supplies from less-affected areas to heavily impacted ones.
 
+## 📜 Publication
+
+This work was presented at the **International Conference on Smart Systems for Applications in Electrical Sciences (ICSSES-2025)**, held at Siddaganga Institute of Technology (SIT), Tumakuru, on March 21st-22nd, 2025.
+
+-   **Paper Title:** SafeRoute: Multi-Modal Optimization for Crisis Management and Evacuation
+-   **Presented By:** Sumanth Ponugupati
+
 ## 🛠️ Tech Stack & Methodology
 
 The system is built with a modern tech stack to handle real-time data processing and machine learning inference.
@@ -63,3 +70,13 @@ To get the project running locally, follow these steps:
 2.  **Open the user interface:**
     Open the `index.html` file (or the relevant frontend file) in your web browser to interact with the application.
 
+## 👥 Authors
+
+This project was developed by:
+-   Sumanth Ponugupati
+-   Teja Sai Yallamelli
+-   Phanidhar Chilukuri
+
+## 📞 Contact
+
+For inquiries or collaboration, feel free to reach out at `bl.en.u4eac22079@bl.students.amrita.edu`.
