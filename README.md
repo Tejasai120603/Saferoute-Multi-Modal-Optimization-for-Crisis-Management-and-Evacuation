@@ -23,7 +23,7 @@ The primary goal of this project is to create a unified solution for disaster ma
 This work was presented at the **International Conference on Smart Systems for Applications in Electrical Sciences (ICSSES-2025)**, held at Siddaganga Institute of Technology (SIT), Tumakuru, on March 21st-22nd, 2025.
 
 -   **Paper Title:** SafeRoute: Multi-Modal Optimization for Crisis Management and Evacuation
--   **Presented By:** =Teja Sai Yallamelli
+-   **Presented By:** Teja Sai Yallamelli
 
 ## 🛠️ Tech Stack & Methodology
 
